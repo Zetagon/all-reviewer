@@ -19,34 +19,38 @@
 ;;
 ;;; Code:
 
-(defmacro el-secretario-get-local (buf-name var)
+(defmacro el-secretario-local-get (buf-name var)
   `(with-current-buffer (get-buffer-create (concat "*el-secretario-state " ,buf-name "*"))
-     ,(eval ,var)))
+     ,var))
 
-(defmacro el-secretario-setq-local (buf-name var val)
+(defmacro el-secretario-local-setq (buf-name var val)
   `(with-current-buffer (get-buffer-create (concat "*el-secretario-state " ,buf-name "*"))
-     (setq-local ,(eval ,var) ,val)))
+     (setq-local ,var ,val)))
 
 (defmacro el-secretario-local-push (buf-name val var)
   `(with-current-buffer (get-buffer-create (concat "*el-secretario-state " ,buf-name "*"))
      (push ,val ,var)))
 
-(let ((barvar 'bar))
-  (el-secretario-setq-local "foo" barvar 3))
-(let ((barvar 'bar))
-  (el-secretario-get-local "foo" barvar) )
+(defmacro el-secretario-local-pop (buf-name var)
+  `(with-current-buffer (get-buffer-create (concat "*el-secretario-state " ,buf-name "*"))
+     (pop ,var)))
 
-(el-secretario-get-local "foo" 'bar)
+;; (let ((barvar 'bar))
+;;   (el-secretario-setq-local "foo" barvar 3))
+;; (let ((barvar 'bar))
+;;   (el-secretario-get-local "foo" barvar) )
 
-(defmacro el-secretario-load-local (buf-name var)
-  `(setq ,var (el-secretario-get-local ,buf-name ,var)))
+;; (el-secretario-get-local "foo" 'bar)
 
-(hydra-disable)
-(defvar foo nil)
-(setq-local foo 1)
-(setq foo 3)
-(el-secretario-setq-local "foo" bar 2)
-(el-secretario-get-local "foo" bar)
-(el-secretario-load-local "foo" bar)
-(provide 'test)
+;; (defmacro el-secretario-load-local (buf-name var)
+;;   `(setq ,var (el-secretario-get-local ,buf-name ,var)))
+
+;; (hydra-disable)
+;; (defvar foo nil)
+;; (setq-local foo 1)
+;; (setq foo 3)
+;; (el-secretario-setq-local "foo" bar 2)
+;; (el-secretario-get-local "foo" bar)
+;; (el-secretario-load-local "foo" bar)
+(provide 'el-secretario-local-get)
 ;;; test.el ends here

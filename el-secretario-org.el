@@ -24,13 +24,14 @@
   ("n" el-secretario-next-item "next" :exit t)
   ("r" (progn (org-refile) (el-secretario-next-item)) "Refile" :exit t)
   ("t" org-set-tags-command "Tags")
+  ("T" org-todo "Set Todo state")
   ("s" org-schedule "Schedule")
   ("d" org-deadline  "Deadline")
   ("D" (delete-region (point-min) (point-max)) "Delete visible")
   ("q" (el-secretario-end-sesion) "Quit" :exit t)
   ("/" nil "disable hydra"  :exit t))
 
-(defmacro el-secretario-org-make-source (query files &optional next-item-hook hydra)
+(defmacro el-secretario-org-make-source (name query files &optional next-item-hook hydra)
   "QUERY is an arbitrary org-ql query. FILES is the files to search through.
 NEXT-ITEM-HOOk is called on each heading.
 HYDRA is an hydra to use during review of this source."
@@ -50,41 +51,38 @@ HYDRA is an hydra to use during review of this source."
 (defvar el-secretario--org-items-done nil
   "A list of items that has been reviewed")
 
-(defun el-secretario--org-pop-items (type)
-  (let* ((buf (el-secretario-source-local-state-buf
-               (car el-secretario-current-source-list)))
-         (list-type (pcase type
-                      ('left
-                       'el-secretario--org-items-left)
-                      ('done
-                       'el-secretario--org-items-done)
-                      (default (error "Can't push to this list type: %s" default))))
+(defun el-secretario--org-pop-items-done ()
+  (el-secretario-local-pop (el-secretario-source-local-state-buf
+                            (car el-secretario-current-source-list))
+                           el-secretario--org-items-done))
 
-         (x (el-secretario-get-local buf list-type)))
-    (el-secretario-setq-local buf list-type (cdr x))
-    (car x)))
+(defun el-secretario--org-pop-items-left ()
+  (el-secretario-local-pop (el-secretario-source-local-state-buf
+                            (car el-secretario-current-source-list))
+                           el-secretario--org-items-left))
 
-(defun el-secretario--org-push-items (type val)
-  (let* ((buf (el-secretario-source-local-state-buf
-               (car el-secretario-current-source-list)))
-         (list-type (pcase type
-                      ('left
-                       'el-secretario--org-items-left)
-                      ('done
-                       'el-secretario--org-items-done)))
-         (x (el-secretario-get-local buf list-type)))
-    (el-secretario-setq-local buf list-type (cons x val))))
+(defun el-secretario--org-push-items-left (val)
+  (el-secretario-local-push (el-secretario-source-local-state-buf
+                             (car el-secretario-current-source-list))
+                            val
+                            el-secretario--org-items-left))
+
+(defun el-secretario--org-push-items-done (val)
+  (el-secretario-local-push (el-secretario-source-local-state-buf
+                             (car el-secretario-current-source-list))
+                            val
+                            el-secretario--org-items-done))
 
 (defun el-secretario-org-init (query &optional files)
   "TODO"
-  (el-secretario-setq-local (el-secretario-source-local-state-buf
+  (el-secretario-local-setq (el-secretario-source-local-state-buf
                              (car el-secretario-current-source-list))
                             el-secretario--org-items-left
                             (org-ql-select (or files
                                                (org-agenda-files)) query
                                                :action '(list (current-buffer)
                                                               (point-marker))))
-  (el-secretario-setq-local (el-secretario-source-local-state-buf
+  (el-secretario-local-setq (el-secretario-source-local-state-buf
                              (car el-secretario-current-source-list))
                             el-secretario--org-items-done nil)
   (funcall (el-secretario-source-hydra-body
@@ -94,9 +92,9 @@ HYDRA is an hydra to use during review of this source."
 (defun el-secretario-org-next-item ()
   "TODO"
 
-  (if-let ((item (el-secretario--org-pop-items 'left)))
+  (if-let ((item (el-secretario--org-pop-items-left)))
       (cl-destructuring-bind (buf pos) item
-        (el-secretario--org-push-items 'done (list buf pos))
+        (el-secretario--org-push-items-done (list buf pos))
         (switch-to-buffer buf)
         (widen)
         (goto-char pos)
