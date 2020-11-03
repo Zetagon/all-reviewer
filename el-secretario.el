@@ -40,7 +40,8 @@
   prev-function
   hydra-body
   finished-hook
-  next-item-hook)
+  next-item-hook
+  local-state-buf)
 
 (defvar el-secretario-current-source-list nil
   "TODO")
