@@ -45,46 +45,46 @@ HYDRA is an hydra to use during review of this source."
     :local-state-buf ,name))
 
 
-(defvar el-secretario--org-items-left nil
+(defvar el-secretario-org--items-left nil
   "A list of items that should be reviewed")
 
-(defvar el-secretario--org-items-done nil
+(defvar el-secretario-org--items-done nil
   "A list of items that has been reviewed")
 
-(defun el-secretario--org-pop-items-done ()
+(defun el-secretario-org--pop-items-done ()
   (el-secretario-local-pop (el-secretario-source-local-state-buf
                             (car el-secretario-current-source-list))
-                           el-secretario--org-items-done))
+                           el-secretario-org--items-done))
 
-(defun el-secretario--org-pop-items-left ()
+(defun el-secretario-org--pop-items-left ()
   (el-secretario-local-pop (el-secretario-source-local-state-buf
                             (car el-secretario-current-source-list))
-                           el-secretario--org-items-left))
+                           el-secretario-org--items-left))
 
-(defun el-secretario--org-push-items-left (val)
+(defun el-secretario-org--push-items-left (val)
   (el-secretario-local-push (el-secretario-source-local-state-buf
                              (car el-secretario-current-source-list))
                             val
-                            el-secretario--org-items-left))
+                            el-secretario-org--items-left))
 
-(defun el-secretario--org-push-items-done (val)
+(defun el-secretario-org--push-items-done (val)
   (el-secretario-local-push (el-secretario-source-local-state-buf
                              (car el-secretario-current-source-list))
                             val
-                            el-secretario--org-items-done))
+                            el-secretario-org--items-done))
 
 (defun el-secretario-org-init (query &optional files)
   "TODO"
   (el-secretario-local-setq (el-secretario-source-local-state-buf
                              (car el-secretario-current-source-list))
-                            el-secretario--org-items-left
+                            el-secretario-org--items-left
                             (org-ql-select (or files
                                                (org-agenda-files)) query
                                                :action '(list (current-buffer)
                                                               (point-marker))))
   (el-secretario-local-setq (el-secretario-source-local-state-buf
                              (car el-secretario-current-source-list))
-                            el-secretario--org-items-done nil)
+                            el-secretario-org--items-done nil)
   (funcall (el-secretario-source-hydra-body
             (car el-secretario-current-source-list)))
   (el-secretario-org-next-item))
@@ -92,9 +92,9 @@ HYDRA is an hydra to use during review of this source."
 (defun el-secretario-org-next-item ()
   "TODO"
 
-  (if-let ((item (el-secretario--org-pop-items-left)))
+  (if-let ((item (el-secretario-org--pop-items-left)))
       (cl-destructuring-bind (buf pos) item
-        (el-secretario--org-push-items-done (list buf pos))
+        (el-secretario-org--push-items-done (list buf pos))
         (switch-to-buffer buf)
         (widen)
         (goto-char pos)
@@ -138,4 +138,9 @@ HYDRA is an hydra to use during review of this source."
   (org-set-tags (--keep (string-equal tags it) (org-get-tags nil 't))))
 
 (provide 'el-secretario-org)
+
+;; Local Variables:
+;; nameless-aliases: (("l" . "el-secretario-local"))
+;; End:
+
 ;;; el-secretario-org.el ends here

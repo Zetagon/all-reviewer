@@ -1,4 +1,4 @@
-;;; test.el --- description -*- lexical-binding: t; -*-
+;;; el-secretario-local.el --- description -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2020 Leo
 ;;
@@ -52,5 +52,5 @@
 ;; (el-secretario-setq-local "foo" bar 2)
 ;; (el-secretario-get-local "foo" bar)
 ;; (el-secretario-load-local "foo" bar)
-(provide 'el-secretario-local-get)
-;;; test.el ends here
+(provide 'el-secretario-local)
+;;; el-secretario-local.el ends here
