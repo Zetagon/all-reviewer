@@ -40,3 +40,7 @@ A framework for daily/weekly reviews.
 - A hydra for actions to do on an item
 - A function that is called when a source is finished
 - A function that is called when arriving at the next item
+
+* Developing
+** A note on indentation
+I use [[https://github.com/Malabarba/Nameless][Nameless]] to manage indentation so the indentation might be a little of.

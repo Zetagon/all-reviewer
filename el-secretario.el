@@ -55,7 +55,7 @@
   "The buffer the user was in before activating el-secretario.")
 
 (defhydra el-secretario--hydra-quit (:exit t
-                                     :foreign-keys run)
+                        :foreign-keys run)
   ("q"  (when el-secretario--original-buffer
           (switch-to-buffer el-secretario--original-buffer)) "Quit"))
 

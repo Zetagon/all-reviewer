@@ -52,9 +52,9 @@ HYDRA is an hydra to use during review of this source"
     (when (buffer-live-p parent-buffer)
       (switch-to-buffer parent-buffer)
       (and (if previous
-	       (notmuch-search-previous-thread)
-	     (notmuch-search-next-thread))
-	   (el-secretario-notmuch--search-show-thread)))))
+               (notmuch-search-previous-thread)
+             (notmuch-search-next-thread))
+           (el-secretario-notmuch--search-show-thread)))))
 
 
 (defun el-secretario-notmuch--search-show-thread (&optional elide-toggle)

@@ -53,38 +53,38 @@ HYDRA is an hydra to use during review of this source."
 
 (defun el-secretario-org--pop-items-done ()
   (el-secretario-local-pop (el-secretario-source-local-state-buf
-                            (car el-secretario-current-source-list))
-                           el-secretario-org--items-done))
+          (car el-secretario-current-source-list))
+         el-secretario-org--items-done))
 
 (defun el-secretario-org--pop-items-left ()
   (el-secretario-local-pop (el-secretario-source-local-state-buf
-                            (car el-secretario-current-source-list))
-                           el-secretario-org--items-left))
+          (car el-secretario-current-source-list))
+         el-secretario-org--items-left))
 
 (defun el-secretario-org--push-items-left (val)
   (el-secretario-local-push (el-secretario-source-local-state-buf
-                             (car el-secretario-current-source-list))
-                            val
-                            el-secretario-org--items-left))
+           (car el-secretario-current-source-list))
+          val
+          el-secretario-org--items-left))
 
 (defun el-secretario-org--push-items-done (val)
   (el-secretario-local-push (el-secretario-source-local-state-buf
-                             (car el-secretario-current-source-list))
-                            val
-                            el-secretario-org--items-done))
+           (car el-secretario-current-source-list))
+          val
+          el-secretario-org--items-done))
 
 (defun el-secretario-org-init (query &optional files)
   "TODO"
   (el-secretario-local-setq (el-secretario-source-local-state-buf
-                             (car el-secretario-current-source-list))
-                            el-secretario-org--items-left
-                            (org-ql-select (or files
-                                               (org-agenda-files)) query
-                                               :action '(list (current-buffer)
-                                                              (point-marker))))
+           (car el-secretario-current-source-list))
+          el-secretario-org--items-left
+          (org-ql-select (or files
+                             (org-agenda-files)) query
+                             :action '(list (current-buffer)
+                                            (point-marker))))
   (el-secretario-local-setq (el-secretario-source-local-state-buf
-                             (car el-secretario-current-source-list))
-                            el-secretario-org--items-done nil)
+           (car el-secretario-current-source-list))
+          el-secretario-org--items-done nil)
   (funcall (el-secretario-source-hydra-body
             (car el-secretario-current-source-list)))
   (el-secretario-org-next-item))
@@ -123,8 +123,8 @@ HYDRA is an hydra to use during review of this source."
       (--each scheduleds
         (insert "Scheduled: " it "\n")))))
 
-  (defun el-secretario-org-previous-item ()
-    "TODO Implement this")
+(defun el-secretario-org-previous-item ()
+  "TODO Implement this")
 
 (defun el-secretario-org-add-tag (&rest tags)
   "Add TAGS to headline."
