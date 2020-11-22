@@ -78,19 +78,38 @@
     (funcall (el-secretario-source-next-function
               (car el-secretario-current-source-list)))))
 
+(defun el-secretario-prev-item ()
+  (interactive)
+  (when el-secretario-current-source-list
+    (funcall (el-secretario-source-prev-function
+              (car el-secretario-current-source-list)))))
 
 (defun el-secretario--next-source ()
+  "TODO"
+  (el-secretario--next-prev-source))
+(defun el-secretario--prev-source ()
+  "TODO"
+  (el-secretario--next-prev-source t))
+
+(defun el-secretario--next-prev-source (prev)
+  "TODO"
   (if el-secretario-current-source-list
-      (progn
-        (push el-secretario-current-source-list-done
-              (car el-secretario-current-source-list))
-        (pop el-secretario-current-source-list)
-        (if el-secretario-current-source-list
-            (funcall (el-secretario-source-init-function
-                      (car el-secretario-current-source-list)))
-          (with-current-buffer (get-buffer-create "*el-secretario-en*")
-            (insert "Done!"))
-          (switch-to-buffer (get-buffer-create "*el-secretario-en*"))))
+      (let ((next-list (if prev
+                           el-secretario-current-source-list-done
+                         el-secretario-current-source-list))
+            (prev-list (if (not prev)
+                           el-secretario-current-source-list-done
+                         el-secretario-current-source-list)))
+        (progn
+          (push prev-list
+                (car next-list))
+          (pop next-list)
+          (if next-list
+              (funcall (el-secretario-source-init-function
+                        (car next-list)))
+            (with-current-buffer (get-buffer-create "*el-secretario-en*")
+              (insert "Done!"))
+            (switch-to-buffer (get-buffer-create "*el-secretario-en*")))))
     (el-secretario-end-sesion)))
 
 

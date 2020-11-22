@@ -20,8 +20,10 @@
 ;;; Code:
 
 (require 'org-ql)
+(load "./el-secretario-local")
 (defhydra el-secretario-org-hydra ()
   ("n" el-secretario-next-item "next" :exit t)
+  ("n" el-secretario-prev-item "next" :exit t)
   ("r" (progn (org-refile) (el-secretario-next-item)) "Refile" :exit t)
   ("t" org-set-tags-command "Tags")
   ("T" org-todo "Set Todo state")
@@ -89,12 +91,13 @@ HYDRA is an hydra to use during review of this source."
             (car el-secretario-current-source-list)))
   (el-secretario-org-next-item))
 
-(defun el-secretario-org-next-item ()
-  "TODO"
-
-  (if-let ((item (el-secretario-org--pop-items-left)))
+(defun el-secretario-org-next-prev-item (prev)
+  (if-let ((item (if prev (el-secretario-org--pop-items-done)
+                   (el-secretario-org--pop-items-left))))
       (cl-destructuring-bind (buf pos) item
-        (el-secretario-org--push-items-done (list buf pos))
+        (if prev
+            (el-secretario-org--push-items-left (list buf pos))
+          (el-secretario-org--push-items-done (list buf pos)))
         (switch-to-buffer buf)
         (widen)
         (goto-char pos)
@@ -106,6 +109,14 @@ HYDRA is an hydra to use during review of this source."
                   (car el-secretario-current-source-list))) )
     (message "No next item!")
     (el-secretario--next-source)))
+
+(defun el-secretario-org-next-item ()
+  "TODO"
+  (el-secretario-org-next-prev-item))
+
+(defun el-secretario-org-previous-item ()
+  "TODO"
+  (el-secretario-org-next-prev-item t))
 
 (defvar date nil)
 (defun el-secretario-org-update-status-buffer ()
@@ -123,8 +134,7 @@ HYDRA is an hydra to use during review of this source."
       (--each scheduleds
         (insert "Scheduled: " it "\n")))))
 
-(defun el-secretario-org-previous-item ()
-  "TODO Implement this")
+
 
 (defun el-secretario-org-add-tag (&rest tags)
   "Add TAGS to headline."
